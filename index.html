@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عباقرة الرياضيات 🧠</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
+
+<style>
+body {
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(135deg, #D6EAF8, #D7BDE2);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* صفحة تسجيل الاسم */
+.center-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+h1 {
+  color: #2C3E50;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.login-box {
+  background: rgba(255,255,255,0.95);
+  padding: 25px 20px;
+  border-radius: 20px;
+  box-shadow: 0px 10px 30px rgba(0,0,0,0.15);
+  width: 80%;
+  max-width: 300px;
+  text-align: center;
+}
+
+input[type="text"] {
+  width: 85%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border: 1px solid #BDC3C7;
+  font-size: 16px;
+  text-align: center;
+}
+
+button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 12px;
+  background: #3498DB;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #2E86C1;
+}
+
+/* صفحة الدروس */
+#lessonsTitle {
+  margin-top: 20px;
+  font-size: 2em;
+  color: #2C3E50;
+  text-align: center;
+}
+
+.lessons-container, .files-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 20px;
+  width: 90%;
+  max-width: 1000px;
+  margin-top: 20px;
+}
+
+.lesson-btn, .file-link {
+  padding: 20px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #2C3E50;
+  box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+  text-decoration: none;
+}
+
+.lesson-btn:hover, .file-link:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0px 12px 30px rgba(0,0,0,0.25);
+}
+
+.emoji {
+  font-size: 45px;
+  margin-bottom: 12px;
+}
+
+.back-btn {
+  margin-top: 30px;
+  padding: 15px 30px;
+  border-radius: 20px;
+  background: #3498DB;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 18px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background: #2E86C1;
+}
+
+@media(max-width:500px){
+  .lesson-btn, .file-link {
+    font-size: 16px;
+    padding: 15px;
+  }
+  .emoji {
+    font-size: 35px;
+  }
+  .back-btn {
+    font-size: 16px;
+    padding: 12px 25px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- صفحة تسجيل الاسم -->
+<div class="center-screen" id="loginBoxContainer">
+  <h1>عباقرة الرياضيات 🧠</h1>
+  <div class="login-box">
+    <input type="text" id="studentName" placeholder="اكتب اسمك هنا">
+    <br>
+    <button onclick="login()">تسجيل الدخول</button>
+  </div>
+
+  <dotlottie-wc 
+    src="https://lottie.host/98369d56-58f0-4dff-831c-f968035adac9/hnz2GNcR0J.lottie"
+    style="width: 250px; height: 250px; margin-top: 20px;"
+    autoplay loop>
+  </dotlottie-wc>
+</div>
+
+<!-- صفحة الدروس -->
+<h1 id="lessonsTitle" style="display:none;">اختر الدرس 📚</h1>
+<div class="lessons-container" id="lessonsContainer" style="display:none;"></div>
+
+<!-- صفحة الملفات لكل درس -->
+<h1 id="filesTitle" style="display:none;"></h1>
+<div class="files-container" id="filesContainer" style="display:none;"></div>
+<button class="back-btn" id="backBtn" style="display:none;" onclick="showLessons()">رجوع لصفحة الدروس 📚</button>
+
+<script>
+// رابط Google Apps Script
+const googleSheetURL = "https://script.google.com/macros/s/AKfycbwrT75VQdIUKIUsXJLUcMiz-Che6cMbE30OEW6ycySrphqTG0H1IF5oE97n45VRArymgA/exec";
+
+// جميع الدروس مع الملفات
+const lessons = [
+  { 
+    name:"الجمع ➕", 
+    files:[
+      {name:"أنشطة الجمع ", url:"jam3/anshita.pdf"},
+      {name:"لعبة الجمع ", url:"https://wordwall.net/ar/resource/6447170/%D8%A7%D9%84%D8%AC%D9%85%D8%B9-%D8%A7%D9%84%D8%B1%D8%A3%D8%B3%D9%8A"},
+      {name:"شرح الجمع (فيديو)", url:"jam3/sharh.mp4"}
+    ], 
+    color:"#AED6F1" 
+  },
+  { name:"الطرح ➖", files:[{name:"أنشطة الطرح (PDF)", url:"tarh/anshita.pdf"},{name:"لعبة الطرح (PDF)", url:"tarh/game.pdf"},{name:"شرح الطرح (فيديو)", url:"tarh/sharh.mp4"}], color:"#F9E79F" },
+  { name:"الترتيب التصاعدي ⬆️", files:[{name:"تمرين ترتيب تصاعدي (PDF)", url:"tartib_asc/1.pdf"},{name:"شرح الترتيب التصاعدي (فيديو)", url:"tartib_asc/2.mp4"}], color:"#A9DFBF" },
+  { name:"الترتيب التنازلي ⬇️", files:[{name:"تمرين ترتيب تنازلي (PDF)", url:"tartib_desc/1.pdf"},{name:"شرح الترتيب التنازلي (فيديو)", url:"tartib_desc/2.mp4"}], color:"#F5B7B1" },
+  { name:"مقارنة الاعداد 🔢", files:[{name:"تمرين مقارنة أعداد (PDF)", url:"moqarnah/1.pdf"},{name:"شرح مقارنة الأعداد (فيديو)", url:"moqarnah/2.mp4"}], color:"#D2B4DE" },
+  { name:"الاعداد الزوجية والفردية 🟢🔴", files:[{name:"تمرين أعداد زوجية وفردية (PDF)", url:"zawj_fardi/1.pdf"},{name:"شرح الأعداد الزوجية والفردية (فيديو)", url:"zawj_fardi/2.mp4"}], color:"#FAD7A0" },
+  { name:"الضعف ✖️", files:[{name:"تمرين الضعف (PDF)", url:"dof/1.pdf"},{name:"شرح الضعف (فيديو)", url:"dof/2.mp4"}], color:"#85C1E9" },
+  { name:"التقريب 🎯", files:[{name:"تمرين التقريب (PDF)", url:"taqrib/1.pdf"},{name:"شرح التقريب (فيديو)", url:"taqrib/2.mp4"}], color:"#F8C471" },
+  { name:"ازواج العدد ١٠ 🔟", files:[{name:"تمرين ازواج العدد 10 (PDF)", url:"azwaj10/1.pdf"},{name:"شرح ازواج العدد 10 (فيديو)", url:"azwaj10/2.mp4"}], color:"#D7BDE2" },
+  { name:"ازواج العدد ١٠٠ 💯", files:[{name:"تمرين ازواج العدد 100 (PDF)", url:"azwaj100/1.pdf"},{name:"شرح ازواج العدد 100 (فيديو)", url:"azwaj100/2.mp4"}], color:"#82E0AA" },
+  { name:"مثلث الحقائق للعدد ١٠ 🔺", files:[{name:"مثلث الحقائق للعدد 10 (PDF)", url:"mosallas10/1.pdf"},{name:"شرح مثلث الحقائق للعدد 10 (فيديو)", url:"mosallas10/2.mp4"}], color:"#F1948A" }
+];
+
+// تسجيل الدخول
+function login() {
+  const student = document.getElementById("studentName").value.trim();
+  if(!student){ 
+    alert("الرجاء كتابة اسمك أولًا!"); 
+    return; 
+  }
+  document.getElementById("loginBoxContainer").style.display = "none";
+  showLessons();
+}
+
+// عرض صفحة الدروس
+function showLessons(){
+  document.getElementById("lessonsTitle").style.display = "block";
+  document.getElementById("lessonsContainer").style.display = "grid";
+
+  document.getElementById("filesTitle").style.display = "none";
+  document.getElementById("filesContainer").style.display = "none";
+  document.getElementById("backBtn").style.display = "none";
+
+  const container = document.getElementById("lessonsContainer");
+  container.innerHTML = "";
+
+  lessons.forEach(lesson=>{
+    const btn = document.createElement("div");
+    btn.className = "lesson-btn";
+    btn.style.background = lesson.color;
+    btn.innerHTML = `<div class="emoji">${lesson.name.split(" ").pop()}</div>
+                     <div>${lesson.name.split(" ").slice(0,-1).join(" ")}</div>`;
+    btn.onclick = ()=>showFiles(lesson);
+    container.appendChild(btn);
+  });
+}
+
+// عرض الملفات الخاصة بالدرس + تسجيل الدخول في Google Sheet
+function showFiles(lesson){
+  const student = document.getElementById("studentName").value.trim();
+  if(student){
+    fetch(`${googleSheetURL}?student=${encodeURIComponent(student)}&lesson=${encodeURIComponent(lesson.name)}`)
+      .then(res => res.text())
+      .then(resText => console.log(resText))
+      .catch(err => console.error("خطأ في التسجيل:", err));
+  }
+
+  document.getElementById("lessonsTitle").style.display = "none";
+  document.getElementById("lessonsContainer").style.display = "none";
+
+  document.getElementById("filesTitle").style.display = "block";
+  document.getElementById("filesTitle").innerText = lesson.name;
+  document.getElementById("filesContainer").style.display = "grid";
+  document.getElementById("backBtn").style.display = "inline-block";
+
+  const container = document.getElementById("filesContainer");
+  container.innerHTML = "";
+
+  lesson.files.forEach(file=>{
+    const link = document.createElement("a");
+    link.className = "file-link";
+    link.href = file.url;
+    link.target = "_blank";
+    link.innerText = file.name;
+    container.appendChild(link);
+  });
+}
+</script>
+
+</body>
+</html>
